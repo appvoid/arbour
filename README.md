@@ -1,4 +1,4 @@
-
+![demo](https://github.com/appvoid/arbour/blob/main/demo.png?raw=true)
 
 # arbour
 This contains everything you need to run your invoicing system locally.
