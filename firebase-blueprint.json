@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "BusinessProfile": {
+      "title": "Business Profile",
+      "description": "Information about the user's business",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Business Name" },
+        "email": { "type": "string", "format": "email", "description": "Contact Email" },
+        "address": { "type": "string", "description": "Physical Address" },
+        "taxId": { "type": "string", "description": "Tax Identification Number" },
+        "logoUrl": { "type": "string", "description": "URL to business logo" },
+        "currency": { "type": "string", "description": "Preferred currency (e.g., USD, EUR)" }
+      },
+      "required": ["name", "email"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Customer information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Client Name" },
+        "email": { "type": "string", "format": "email", "description": "Client Email" },
+        "address": { "type": "string", "description": "Client Address" },
+        "taxId": { "type": "string", "description": "Client Tax ID" },
+        "phone": { "type": "string", "description": "Client Phone Number" }
+      },
+      "required": ["name", "email"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Service or Product item",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Item Name" },
+        "description": { "type": "string", "description": "Item Description" },
+        "unitPrice": { "type": "number", "description": "Price per unit" }
+      },
+      "required": ["name", "unitPrice"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Billing document",
+      "type": "object",
+      "properties": {
+        "number": { "type": "string", "description": "Invoice number (e.g., INV-001)" },
+        "date": { "type": "string", "format": "date", "description": "Issue date" },
+        "dueDate": { "type": "string", "format": "date", "description": "Payment due date" },
+        "status": { "type": "string", "enum": ["draft", "sent", "paid", "overdue"], "description": "Current status" },
+        "clientId": { "type": "string", "description": "Reference to the client" },
+        "items": {
+          "type": "array",
+          "description": "List of line items",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "unitPrice": { "type": "number" },
+              "amount": { "type": "number" }
+            }
+          }
+        },
+        "taxRate": { "type": "number", "description": "Tax rate percentage" },
+        "taxAmount": { "type": "number" },
+        "subtotal": { "type": "number" },
+        "total": { "type": "number" },
+        "notes": { "type": "string" }
+      },
+      "required": ["number", "date", "clientId", "items", "total"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "BusinessProfile",
+      "description": "Business settings for a specific user"
+    },
+    "/users/{userId}/clients/{clientId}": {
+      "schema": "Client",
+      "description": "Clients managed by the user"
+    },
+    "/users/{userId}/products/{productId}": {
+      "schema": "Product",
+      "description": "Products catalog managed by the user"
+    },
+    "/users/{userId}/invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Invoices created by the user"
+    }
+  }
+}

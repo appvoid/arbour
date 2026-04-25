@@ -1,0 +1,348 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+const resources = {
+  en: {
+    translation: {
+      "common": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "loading": "Gathering roots...",
+        "search": "Search...",
+        "actions": "Actions",
+        "status": "Status",
+        "language": "Language"
+      },
+      "app": {
+        "title": "Arbour Invoicing",
+        "subtitle": "Cultivate your professional transactions with artisanal simplicity and digital precision.",
+        "signIn": "Begin Your Journey",
+        "trustedBy": "Trusted by Boutique Agencies World-wide"
+      },
+      "layout": {
+        "dashboard": "Dashboard",
+        "invoices": "Invoices",
+        "clients": "Clients",
+        "products": "Products",
+        "settings": "Settings",
+        "signOut": "Sign Out"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome back, {{name}}",
+        "newInvoice": "Create New Invoice",
+        "recentInvoices": "Recent Invoices",
+        "viewAll": "View All",
+        "overview": {
+          "totalOutstanding": "Total Outstanding",
+          "overdue": "Overdue",
+          "draft": "Draft",
+          "paid": "Paid",
+          "sent": "Sent"
+        }
+      },
+      "invoices": {
+        "title": "Ledger",
+        "subtitle": "Track and manage your financial records",
+        "newInvoice": "Record New Entry",
+        "search": "Search records...",
+        "table": {
+          "client": "Client",
+          "date": "Issue Date",
+          "amount": "Total Value",
+          "status": "Status"
+        },
+        "empty": "Your ledger is currently empty.",
+        "deleteConfirm": "Are you sure you want to delete this invoice?",
+        "editTitle": "Edit Arbour",
+        "newTitle": "New Arbour Entry",
+        "discard": "Discard Changes",
+        "downloadPdf": "Download PDF",
+        "protect": "Protect Document",
+        "protecting": "Preserving...",
+        "serviceRecord": "Service Record",
+        "addPosition": "Add Position",
+        "workItem": "Work Item",
+        "qty": "Qty",
+        "rate": "Rate",
+        "rowTotal": "Row Total",
+        "emptyLedger": "Your ledger is empty. Click to record a service.",
+        "conditions": "Conditions & Observations",
+        "conditionsPlaceholder": "Share any details about this arbour entry...",
+        "documentIndex": "Document Index",
+        "issuedOn": "Issued On",
+        "validUntil": "Valid Until",
+        "recipient": "Recipient",
+        "filingStatus": "Filing Status",
+        "subtotal": "SUBTOTAL",
+        "adjustments": "Adjustments",
+        "finalBalance": "Final Balance",
+        "selectClient": "Select client...",
+        "selectProduct": "Select product..."
+      },
+      "clients": {
+        "title": "Patrons",
+        "subtitle": "Manage your valuable relationships",
+        "newClient": "Add Patron",
+        "search": "Search patrons...",
+        "empty": "No patrons found.",
+        "deleteConfirm": "Are you sure you want to remove this patron?",
+        "editTitle": "Edit Patron",
+        "newTitle": "New Patron Enrollment",
+        "name": "Organization / Individual Name *",
+        "email": "Primary Contact Email *",
+        "taxId": "Tax Identification / VAT",
+        "address": "Registered Address",
+        "phone": "Contact Number",
+        "cancel": "Cancel",
+        "save": "Register Patron"
+      },
+      "products": {
+        "title": "Products",
+        "subtitle": "Manage your services and offerings",
+        "newProduct": "Add Position",
+        "search": "Search offerings...",
+        "empty": "No offerings found.",
+        "image": "Product Image",
+        "generateImage": "AI Image",
+        "imageGenerateNameRequired": "Please enter a product name first to generate an image.",
+        "imageGenerateFailed": "Could not generate image. Please try again.",
+        "imageGenerateError": "Error generating image.",
+        "deleteConfirm": "Are you sure you want to remove this product/service?",
+        "editTitle": "Edit Offering",
+        "newTitle": "New Offering",
+        "name": "Position Name *",
+        "baseRate": "Base Rate *",
+        "description": "Observation / Description",
+        "cancel": "Cancel",
+        "save": "Save Entry"
+      },
+      "settings": {
+        "title": "Arbour Profile",
+        "subtitle": "Manage your business identity and billing details",
+        "businessName": "Business Name",
+        "email": "Official Email",
+        "taxId": "Tax Identification / VAT",
+        "currency": "Currency Preference",
+        "address": "Primary Mailing Address",
+        "addressPlaceholder": "Where should arbours be sent?",
+        "success": "Profile preserved successfully.",
+        "save": "Confirm Arbour Identity",
+        "saving": "Preserving...",
+        "logo": "Company Logo",
+        "uploadLogo": "Upload Logo",
+        "logoRequirements": "PNG, JPG, up to 1.5MB",
+        "logoSizeError": "Image size must be less than 1.5MB",
+        "logoPosition": "Logo Position (PDF)",
+        "generateLogo": "Generate AI Logo",
+        "generatingLogo": "Generating...",
+        "logoGenerateNameRequired": "Please enter a business name first to generate a logo.",
+        "logoGenerateFailed": "Could not generate logo. Please try again.",
+        "logoGenerateError": "Error generating logo.",
+        "position": {
+          "topLeft": "Top Left",
+          "topCenter": "Top Center",
+          "topRight": "Top Right",
+          "bottomLeft": "Bottom Left",
+          "bottomCenter": "Bottom Center",
+          "bottomRight": "Bottom Right"
+        }
+      },
+      "pdf": {
+        "title": "INVOICE",
+        "billTo": "Bill To",
+        "issueDate": "Issue Date:",
+        "dueDate": "Due Date:",
+        "description": "Description",
+        "rate": "Rate",
+        "qty": "Qty",
+        "amount": "Amount",
+        "subtotal": "Subtotal",
+        "tax": "Tax",
+        "total": "Total Due",
+        "notes": "Notes",
+        "taxId": "Tax ID:"
+      }
+    }
+  },
+  es: {
+    translation: {
+      "common": {
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "loading": "Reuniendo raíces...",
+        "search": "Buscar...",
+        "actions": "Acciones",
+        "status": "Estado",
+        "language": "Idioma"
+      },
+      "app": {
+        "title": "Facturación Arbour",
+        "subtitle": "Cultiva tus transacciones profesionales con simplicidad artesanal y precisión digital.",
+        "signIn": "Comienza Tu Viaje",
+        "trustedBy": "Con la confianza de agencias boutique en todo el mundo"
+      },
+      "layout": {
+        "dashboard": "Panel",
+        "invoices": "Facturas",
+        "clients": "Clientes",
+        "products": "Productos",
+        "settings": "Ajustes",
+        "signOut": "Cerrar sesión"
+      },
+      "dashboard": {
+        "title": "Panel",
+        "welcome": "Bienvenido, {{name}}",
+        "newInvoice": "Crear Nueva Factura",
+        "recentInvoices": "Facturas Recientes",
+        "viewAll": "Ver Todo",
+        "overview": {
+          "totalOutstanding": "Total Pendiente",
+          "overdue": "Atrasado",
+          "draft": "Borrador",
+          "paid": "Pagado",
+          "sent": "Enviado"
+        }
+      },
+      "invoices": {
+        "title": "Libro Mayor",
+        "subtitle": "Rastrea y administra tus registros financieros",
+        "newInvoice": "Registrar Nueva Entrada",
+        "search": "Buscar registros...",
+        "table": {
+          "client": "Cliente",
+          "date": "Fecha de Emisión",
+          "amount": "Valor Total",
+          "status": "Estado"
+        },
+        "empty": "Tu libro mayor está vacío actualmente.",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar esta factura?",
+        "editTitle": "Editar Arbour",
+        "newTitle": "Nueva Entrada Arbour",
+        "discard": "Descartar Cambios",
+        "downloadPdf": "Descargar PDF",
+        "protect": "Proteger Documento",
+        "protecting": "Preservando...",
+        "serviceRecord": "Registro de Servicio",
+        "addPosition": "Añadir Posición",
+        "workItem": "Artículo de Trabajo",
+        "qty": "Cant",
+        "rate": "Tarifa",
+        "rowTotal": "Total Fila",
+        "emptyLedger": "Tu libro mayor está vacío. Haz clic para registrar un servicio.",
+        "conditions": "Condiciones y Observaciones",
+        "conditionsPlaceholder": "Comparte cualquier detalle sobre esta entrada...",
+        "documentIndex": "Índice de Documento",
+        "issuedOn": "Emitido El",
+        "validUntil": "Válido Hasta",
+        "recipient": "Destinatario",
+        "filingStatus": "Estado de Archivo",
+        "subtotal": "SUBTOTAL",
+        "adjustments": "Ajustes",
+        "finalBalance": "Saldo Final",
+        "selectClient": "Seleccionar cliente...",
+        "selectProduct": "Seleccionar producto..."
+      },
+      "clients": {
+        "title": "Patronos",
+        "subtitle": "Maneja tus relaciones valiosas",
+        "newClient": "Añadir Patrono",
+        "search": "Buscar patronos...",
+        "empty": "No se encontraron patronos.",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar a este patrono?",
+        "editTitle": "Editar Patrono",
+        "newTitle": "Nueva Inscripción de Patrono",
+        "name": "Nombre de Organización / Individuo *",
+        "email": "Correo de Contacto Principal *",
+        "taxId": "Identificación Fiscal / IVA",
+        "address": "Dirección Registrada",
+        "phone": "Número de Contacto",
+        "cancel": "Cancelar",
+        "save": "Registrar Patrono"
+      },
+      "products": {
+        "title": "Productos",
+        "subtitle": "Maneja tus servicios y ofertas",
+        "newProduct": "Añadir Posición",
+        "search": "Buscar ofertas...",
+        "empty": "No se encontraron ofertas.",
+        "image": "Imagen del Producto",
+        "generateImage": "Imagen con IA",
+        "imageGenerateNameRequired": "Por favor, introduce primero el nombre del producto para generar una imagen.",
+        "imageGenerateFailed": "No se pudo generar la imagen. Por favor, inténtalo de nuevo.",
+        "imageGenerateError": "Error al generar la imagen.",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar este producto/servicio?",
+        "editTitle": "Editar Oferta",
+        "newTitle": "Nueva Oferta",
+        "name": "Nombre de Posición *",
+        "baseRate": "Tarifa Base *",
+        "description": "Observación / Descripción",
+        "cancel": "Cancelar",
+        "save": "Guardar Entrada"
+      },
+      "settings": {
+        "title": "Perfil Arbour",
+        "subtitle": "Maneja tu identidad comercial y detalles de facturación",
+        "businessName": "Nombre Comercial",
+        "email": "Correo Oficial",
+        "taxId": "Identificación Fiscal / IVA",
+        "currency": "Preferencia de Moneda",
+        "address": "Dirección Postal Principal",
+        "addressPlaceholder": "¿A dónde deben enviarse los arbours?",
+        "success": "Perfil preservado exitosamente.",
+        "save": "Confirmar Identidad Arbour",
+        "saving": "Preservando...",
+        "logo": "Logotipo de la Empresa",
+        "uploadLogo": "Subir Logotipo",
+        "logoRequirements": "PNG, JPG, hasta 1.5MB",
+        "logoSizeError": "El tamaño de la imagen debe ser menor a 1.5MB",
+        "logoPosition": "Posición del Logo (PDF)",
+        "generateLogo": "Generar Logo con IA",
+        "generatingLogo": "Generando...",
+        "logoGenerateNameRequired": "Por favor, introduce primero el nombre de la empresa para generar un logo.",
+        "logoGenerateFailed": "No se pudo generar el logo. Por favor, inténtalo de nuevo.",
+        "logoGenerateError": "Error al generar el logo.",
+        "position": {
+          "topLeft": "Arriba a la Izquierda",
+          "topCenter": "Arriba al Centro",
+          "topRight": "Arriba a la Derecha",
+          "bottomLeft": "Abajo a la Izquierda",
+          "bottomCenter": "Abajo al Centro",
+          "bottomRight": "Abajo a la Derecha"
+        }
+      },
+      "pdf": {
+        "title": "FACTURA",
+        "billTo": "Facturar A",
+        "issueDate": "Fecha Emisión:",
+        "dueDate": "Vencimiento:",
+        "description": "Descripción",
+        "rate": "Tarifa",
+        "qty": "Cant",
+        "amount": "Monto",
+        "subtotal": "Subtotal",
+        "tax": "Impuesto",
+        "total": "Total a Pagar",
+        "notes": "Notas",
+        "taxId": "ID Fiscal:"
+      }
+    }
+  }
+};
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: "en", // default language
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false
+    }
+  });
+
+export default i18n;
