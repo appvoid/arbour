@@ -244,8 +244,8 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
                         className="w-full px-4 py-3 bg-white border border-black/5 rounded-xl outline-none focus:ring-2 focus:ring-natural-sage/20 text-right"
                       />
                       {item.costPrice !== undefined && item.unitPrice > 0 ? (
-                        <div className={`text-[10px] font-bold mt-1 ${(item.unitPrice - item.costPrice) >= 0 ? 'text-green-500/80' : 'text-red-500/80'}`}>
-                          {(((item.unitPrice - item.costPrice) / item.unitPrice) * 100).toFixed(1)}% margin
+                        <div className={`text-[10px] font-bold mt-1.5 px-1.5 py-0.5 rounded-md w-max ${(item.unitPrice - item.costPrice) >= 0 ? 'bg-natural-sage/10 text-natural-sage' : 'bg-red-500/10 text-red-600'}`}>
+                          {(((item.unitPrice - item.costPrice) / item.unitPrice) * 100).toFixed(1)}% {t('products.margin', 'margin')}
                         </div>
                       ) : null}
                     </div>

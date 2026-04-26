@@ -128,6 +128,8 @@ const resources = {
         "newTitle": "New Offering",
         "name": "Position Name *",
         "baseRate": "Base Rate *",
+        "costPrice": "Cost Price",
+        "margin": "margin",
         "description": "Observation / Description",
         "cancel": "Cancel",
         "save": "Save Entry"
@@ -306,6 +308,8 @@ const resources = {
         "newTitle": "Nueva Oferta",
         "name": "Nombre de Posición *",
         "baseRate": "Tarifa Base *",
+        "costPrice": "Costo Original",
+        "margin": "margen",
         "description": "Observación / Descripción",
         "cancel": "Cancelar",
         "save": "Guardar Entrada"

@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 import { invoiceService } from '../lib/services';
 import { Invoice } from '../types';
 import { formatCurrency, formatDate } from '../lib/utils';
-import { TrendingUp, Clock, CheckCircle2, AlertCircle, Plus } from 'lucide-react';
+import { TrendingUp, Clock, CheckCircle2, AlertCircle, Plus, ChevronDown } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 
@@ -113,32 +113,35 @@ export function Dashboard({ user, onNewInvoice, onEditInvoice, onViewAll }: Dash
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="natural-card p-6 xl:p-8 relative flex flex-col justify-between overflow-hidden"
+            className="natural-card p-6 relative flex flex-col justify-between overflow-hidden min-h-[140px]"
           >
             <div className="flex justify-between items-start mb-4 gap-2">
-              <p className="text-[11px] uppercase tracking-[1px] text-[#7a827c] font-semibold line-clamp-2">{stat.label}</p>
+              <p className="text-[11px] uppercase tracking-[1px] text-[#7a827c] font-semibold flex-1">{stat.label}</p>
               {stat.isMargin && (
-                <div className="shrink-0 bg-white border border-black/5 rounded-md overflow-hidden dropdown-container shadow-sm">
+                <div className="shrink-0 relative bg-white border border-black/5 rounded-md shadow-sm">
                   <select 
                     value={marginTimeframe}
                     onChange={(e) => setMarginTimeframe(e.target.value as any)}
-                    className="text-[10px] bg-transparent border-none outline-none font-bold cursor-pointer pl-2 pr-6 py-1 text-[#7a827c] appearance-none hover:bg-gray-50 focus:ring-0 focus:outline-none w-full min-w-[70px]"
+                    className="text-[10px] bg-transparent border-none outline-none font-bold cursor-pointer pl-2 pr-6 py-1 text-[#7a827c] appearance-none hover:bg-gray-50 focus:ring-0 focus:outline-none w-full"
                   >
                     <option value="day">{t('common.day', 'Today')}</option>
                     <option value="week">{t('common.week', '7 Days')}</option>
                     <option value="month">{t('common.month', 'Month')}</option>
                     <option value="year">{t('common.year', 'Year')}</option>
                   </select>
+                  <ChevronDown className="w-3 h-3 text-[#7a827c] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               )}
             </div>
-            <div className="flex flex-col xl:flex-row xl:items-baseline gap-2 mt-auto">
-              <p className="text-3xl font-serif text-natural-text truncate max-w-[100%]">{formatCurrency(stat.value)}</p>
-              {stat.suffix && (
-                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 w-max mb-1 xl:mb-0 ${margins.profit >= 0 ? 'bg-natural-sage/10 text-natural-sage' : 'bg-red-500/10 text-red-600'}`}>
-                   {stat.suffix}
-                 </span>
-              )}
+            <div className="mt-auto">
+              <div className="flex flex-col gap-1 items-start">
+                <p className="text-2xl xl:text-3xl font-serif text-natural-text truncate max-w-full" title={formatCurrency(stat.value)}>{formatCurrency(stat.value)}</p>
+                {stat.suffix && (
+                   <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md ${margins.profit >= 0 ? 'bg-natural-sage/10 text-natural-sage' : 'bg-red-500/10 text-red-600'}`}>
+                     {stat.suffix}
+                   </span>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}

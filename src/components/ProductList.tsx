@@ -201,8 +201,8 @@ export function ProductList({ user }: ProductListProps) {
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-[#99a19b] uppercase tracking-widest">{t('products.baseRate').replace(' *', '')}</span>
                   {product.costPrice && product.unitPrice > 0 ? (
-                    <span className={`text-[10px] font-bold mt-1 ${product.unitPrice >= product.costPrice ? 'text-green-500' : 'text-red-500'}`}>
-                      {(((product.unitPrice - product.costPrice) / product.unitPrice) * 100).toFixed(1)}% margin
+                    <span className={`text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-md w-max ${product.unitPrice >= product.costPrice ? 'bg-natural-sage/10 text-natural-sage' : 'bg-red-500/10 text-red-600'}`}>
+                      {(((product.unitPrice - product.costPrice) / product.unitPrice) * 100).toFixed(1)}% {t('products.margin', 'margin')}
                     </span>
                   ) : null}
                 </div>
