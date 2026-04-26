@@ -198,7 +198,14 @@ export function ProductList({ user }: ProductListProps) {
                 </p>
               )}
               <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
-                <span className="text-[10px] font-bold text-[#99a19b] uppercase tracking-widest">{t('products.baseRate').replace(' *', '')}</span>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-[#99a19b] uppercase tracking-widest">{t('products.baseRate').replace(' *', '')}</span>
+                  {product.costPrice && product.unitPrice > 0 ? (
+                    <span className={`text-[10px] font-bold mt-1 ${product.unitPrice >= product.costPrice ? 'text-green-500' : 'text-red-500'}`}>
+                      {(((product.unitPrice - product.costPrice) / product.unitPrice) * 100).toFixed(1)}% margin
+                    </span>
+                  ) : null}
+                </div>
                 <span className="text-xl font-serif text-natural-text font-bold">{formatCurrency(product.unitPrice)}</span>
               </div>
             </motion.div>
@@ -227,19 +234,36 @@ export function ProductList({ user }: ProductListProps) {
                   className="w-full px-4 py-3 bg-natural-bg/50 border border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-natural-sage/30 outline-none"
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-[#99a19b] uppercase tracking-wider">{t('products.baseRate')}</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#99a19b] text-sm">$</span>
-                  <input
-                    required
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={editingProduct?.unitPrice || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, unitPrice: parseFloat(e.target.value) || 0 })}
-                    className="w-full pl-8 pr-4 py-3 bg-natural-bg/50 border border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-natural-sage/30 outline-none"
-                  />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-[#99a19b] uppercase tracking-wider">{t('products.baseRate')}</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#99a19b] text-sm">$</span>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editingProduct?.unitPrice || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, unitPrice: parseFloat(e.target.value) || 0 })}
+                      className="w-full pl-8 pr-4 py-3 bg-natural-bg/50 border border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-natural-sage/30 outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-[#99a19b] uppercase tracking-wider">{t('products.costPrice', 'Costo Original')}</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#99a19b] text-sm">$</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={editingProduct?.costPrice || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, costPrice: parseFloat(e.target.value) || 0 })}
+                      className="w-full pl-8 pr-4 py-3 bg-natural-bg/50 border border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-natural-sage/30 outline-none"
+                      placeholder="Opcional"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="space-y-1.5">

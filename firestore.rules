@@ -36,15 +36,16 @@ service cloud.firestore {
              (data.get('logoUrl', '') is string && data.get('logoUrl', '').size() <= 2000000) &&
              (data.get('logoPosition', 'top_left') in ['top_left', 'top_center', 'top_right', 'bottom_left', 'bottom_center', 'bottom_right']) &&
              (data.get('currency', 'USD') is string && data.get('currency', 'USD').size() <= 10) &&
+             (data.get('defaultAdjustments', []) is list && data.get('defaultAdjustments', []).size() <= 20) &&
              (data.get('updatedAt', request.time) is timestamp);
     }
 
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow create: if isOwner(userId) && isValidId(userId) && isValidBusinessProfile(incoming()) && 
-                    incoming().keys().hasAll(['name', 'email']) && incoming().keys().size() <= 12;
+                    incoming().keys().hasAll(['name', 'email']) && incoming().keys().size() <= 13;
       allow update: if isOwner(userId) && isValidId(userId) && isValidBusinessProfile(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'email', 'address', 'taxId', 'logoUrl', 'logoPosition', 'currency', 'updatedAt', 'createdAt', 'id', 'uid', 'userId'])
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'email', 'address', 'taxId', 'logoUrl', 'logoPosition', 'currency', 'defaultAdjustments', 'updatedAt', 'createdAt', 'id', 'uid', 'userId'])
       );
     }
 
@@ -71,6 +72,7 @@ service cloud.firestore {
     function isValidProduct(data) {
       return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
              data.unitPrice is number && data.unitPrice >= 0 &&
+             (data.get('costPrice', 0) is number && data.get('costPrice', 0) >= 0) &&
              (data.get('description', '') is string && data.get('description', '').size() <= 1000) &&
              (data.get('imageUrl', '') is string && data.get('imageUrl', '').size() <= 2000000) &&
              (data.get('id', '') is string);
@@ -79,9 +81,9 @@ service cloud.firestore {
     match /users/{userId}/products/{productId} {
       allow list, get: if isOwner(userId);
       allow create: if isOwner(userId) && isValidId(productId) && isValidProduct(incoming()) &&
-                    incoming().keys().hasAll(['name', 'unitPrice']) && incoming().keys().size() <= 9;
+                    incoming().keys().hasAll(['name', 'unitPrice']) && incoming().keys().size() <= 10;
       allow update: if isOwner(userId) && isValidProduct(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'unitPrice', 'description', 'imageUrl', 'id'])
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'unitPrice', 'costPrice', 'description', 'imageUrl', 'id'])
       );
       allow delete: if isOwner(userId);
     }
@@ -94,6 +96,7 @@ service cloud.firestore {
              data.items is list && data.items.size() > 0 && data.items.size() <= 100 &&
              data.total is number && data.total >= 0 &&
              data.status in ['draft', 'sent', 'paid', 'overdue'] &&
+             (data.get('adjustments', []) is list && data.get('adjustments', []).size() <= 20) &&
              (data.get('updatedAt', request.time) is timestamp) &&
              (data.get('createdAt', request.time) is timestamp);
     }
@@ -103,7 +106,7 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidId(invoiceId) && isValidInvoice(incoming()) &&
                     exists(/databases/$(database)/documents/users/$(userId)/clients/$(incoming().clientId));
       allow update: if isOwner(userId) && isValidInvoice(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['number', 'date', 'dueDate', 'status', 'clientId', 'items', 'taxRate', 'taxAmount', 'subtotal', 'total', 'notes', 'updatedAt', 'createdAt', 'id'])
+        incoming().diff(existing()).affectedKeys().hasOnly(['number', 'date', 'dueDate', 'status', 'clientId', 'items', 'taxRate', 'taxAmount', 'adjustments', 'subtotal', 'total', 'notes', 'updatedAt', 'createdAt', 'id'])
       );
       allow delete: if isOwner(userId);
     }

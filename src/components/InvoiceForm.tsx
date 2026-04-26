@@ -53,6 +53,13 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
         const invoices = await invoiceService.getInvoices(user.uid);
         const existing = invoices.find(i => i.id === invoiceId);
         if (existing) setInvoice(existing);
+      } else {
+        if (profileData && profileData.defaultAdjustments && profileData.defaultAdjustments.length > 0) {
+          setInvoice(prev => ({
+            ...prev,
+            adjustments: [...profileData.defaultAdjustments!]
+          }));
+        }
       }
       setLoading(false);
     };
@@ -79,6 +86,7 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
       if (product) {
         item.name = product.name;
         item.unitPrice = product.unitPrice;
+        item.costPrice = product.costPrice || 0;
       }
     }
     
@@ -92,11 +100,23 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
     calculateTotals(newItems);
   };
 
-  const calculateTotals = (items: InvoiceItem[]) => {
+  const calculateTotals = (items: InvoiceItem[], adjs = invoice.adjustments) => {
     const subtotal = items.reduce((acc, item) => acc + item.amount, 0);
-    const taxAmount = subtotal * ((invoice.taxRate || 0) / 100);
-    const total = subtotal + taxAmount;
-    setInvoice({ ...invoice, items, subtotal, taxAmount, total });
+    
+    let taxAmount = subtotal * ((invoice.taxRate || 0) / 100);
+    let calculatedTotal = subtotal + taxAmount;
+
+    if (adjs && adjs.length > 0) {
+      adjs.forEach(adj => {
+        if (adj.type === 'percentage') {
+          calculatedTotal += subtotal * (adj.value / 100);
+        } else {
+          calculatedTotal += adj.value;
+        }
+      });
+    }
+
+    setInvoice(prev => ({ ...prev, items, subtotal, taxAmount, adjustments: adjs, total: calculatedTotal }));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -223,6 +243,11 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
                         onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
                         className="w-full px-4 py-3 bg-white border border-black/5 rounded-xl outline-none focus:ring-2 focus:ring-natural-sage/20 text-right"
                       />
+                      {item.costPrice !== undefined && item.unitPrice > 0 ? (
+                        <div className={`text-[10px] font-bold mt-1 ${(item.unitPrice - item.costPrice) >= 0 ? 'text-green-500/80' : 'text-red-500/80'}`}>
+                          {(((item.unitPrice - item.costPrice) / item.unitPrice) * 100).toFixed(1)}% margin
+                        </div>
+                      ) : null}
                     </div>
                     <div className="col-span-12 md:col-span-3 flex items-center justify-between gap-4 h-full">
                       <div className="text-right flex-1 space-y-2">
@@ -340,24 +365,90 @@ export function InvoiceForm({ user, invoiceId, onCancel, onSave }: InvoiceFormPr
               <div className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-[#99a19b] font-medium tracking-wide text-xs uppercase">{t('invoices.adjustments')}</span>
-                  <div className="flex items-center bg-natural-bg rounded-lg px-2 py-1">
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={invoice.taxRate}
-                      onChange={(e) => {
-                        const rate = parseFloat(e.target.value) || 0;
-                        const taxAmount = (invoice.subtotal || 0) * (rate / 100);
-                        setInvoice({ ...invoice, taxRate: rate, taxAmount, total: (invoice.subtotal || 0) + taxAmount });
-                      }}
-                      className="w-8 bg-transparent text-center text-xs outline-none font-bold"
-                    />
-                    <span className="text-[10px] opacity-40">%</span>
-                  </div>
                 </div>
-                <span className="font-sans text-natural-text/60">{formatCurrency(invoice.taxAmount || 0)}</span>
               </div>
+              
+              {/* Legacy tax rate if it exists */}
+              {invoice.taxRate ? (
+                <div className="flex justify-between items-center text-sm ml-4">
+                  <span className="text-natural-text text-xs">Legacy Tax ({invoice.taxRate}%)</span>
+                  <span className="font-sans text-natural-text/60">{formatCurrency(invoice.taxAmount || 0)}</span>
+                </div>
+              ) : null}
+
+              {/* Custom adjustments */}
+              {(invoice.adjustments || []).map((adj, index) => {
+                const adjAmount = adj.type === 'percentage' ? (invoice.subtotal || 0) * (adj.value / 100) : adj.value;
+                return (
+                  <div key={adj.id} className="flex flex-col gap-2 py-2 border-b border-black/5 last:border-0 text-sm">
+                    <div className="flex justify-between items-center gap-2">
+                      <input
+                        type="text"
+                        value={adj.name}
+                        onChange={(e) => {
+                          const newAdjs = [...(invoice.adjustments || [])];
+                          newAdjs[index].name = e.target.value;
+                          calculateTotals(invoice.items || [], newAdjs);
+                        }}
+                        placeholder={t('common.adjustmentName', 'Discount/Tax Name')}
+                        className="flex-1 min-w-0 bg-natural-bg/50 px-2.5 py-1.5 rounded-lg text-xs outline-none focus:bg-white"
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const newAdjs = [...(invoice.adjustments || [])];
+                          newAdjs.splice(index, 1);
+                          calculateTotals(invoice.items || [], newAdjs);
+                        }}
+                        className="text-red-400 hover:text-red-600 p-1 flex-shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="flex gap-1 items-center max-w-[120px]">
+                        <select
+                          value={adj.type}
+                          onChange={(e) => {
+                            const newAdjs = [...(invoice.adjustments || [])];
+                            newAdjs[index].type = e.target.value as any;
+                            calculateTotals(invoice.items || [], newAdjs);
+                          }}
+                          className="w-[2.5rem] bg-natural-bg/50 px-1 py-1.5 rounded-lg text-xs outline-none focus:bg-white cursor-pointer"
+                        >
+                          <option value="percentage">%</option>
+                          <option value="fixed">$</option>
+                        </select>
+                        <input
+                          type="number"
+                          step={adj.type === 'percentage' ? '0.1' : '0.01'}
+                          value={adj.value}
+                          onChange={(e) => {
+                            const newAdjs = [...(invoice.adjustments || [])];
+                            newAdjs[index].value = parseFloat(e.target.value) || 0;
+                            calculateTotals(invoice.items || [], newAdjs);
+                          }}
+                          className="w-16 bg-natural-bg/50 px-2 py-1.5 rounded-lg text-xs outline-none text-right focus:bg-white"
+                        />
+                      </div>
+                      <span className="font-sans text-natural-text/60 font-medium text-right min-w-0 flex-1 truncate">{formatCurrency(adjAmount)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => {
+                  const newAdjs = [...(invoice.adjustments || []), { id: Math.random().toString(36).substr(2, 9), name: '', type: 'percentage' as const, value: 0 }];
+                  calculateTotals(invoice.items || [], newAdjs);
+                }}
+                className="text-natural-accent text-xs font-medium flex items-center gap-1 hover:opacity-80 transition-all mt-2"
+              >
+                <Plus className="w-3 h-3" /> {t('common.addAdjustment', 'Add Adjustment')}
+              </button>
+
               <div className="pt-6 mt-2 border-t border-gray-100 flex justify-between items-end">
                 <span className="text-[11px] font-bold text-natural-sage uppercase tracking-widest pb-1">{t('invoices.finalBalance')}</span>
                 <span className="text-3xl font-serif text-natural-text font-normal">{formatCurrency(invoice.total || 0)}</span>

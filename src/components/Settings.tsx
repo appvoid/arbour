@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { businessService } from '../lib/services';
 import { BusinessProfile } from '../types';
-import { Building2, Mail, MapPin, Globe, Loader2, Save, Image as ImageIcon, Upload, Sparkles } from 'lucide-react';
+import { Building2, Mail, MapPin, Globe, Loader2, Save, Image as ImageIcon, Upload, Sparkles, Percent, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { LogoPosition } from '../types';
+import { LogoPosition, Adjustment } from '../types';
 import { GoogleGenAI } from '@google/genai';
 import { resizeImage } from '../lib/utils';
 
@@ -107,6 +107,31 @@ export function Settings({ user }: SettingsProps) {
     setMessage(t('settings.success'));
     setSaving(false);
     setTimeout(() => setMessage(''), 3000);
+  };
+
+  const addAdjustment = () => {
+    const newAdj: Adjustment = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: '',
+      type: 'percentage',
+      value: 0
+    };
+    setProfile({ ...profile, defaultAdjustments: [...(profile.defaultAdjustments || []), newAdj] });
+  };
+
+  const updateAdjustment = (id: string, field: keyof Adjustment, value: any) => {
+    const newAdjs = (profile.defaultAdjustments || []).map(adj => {
+      if (adj.id === id) {
+        return { ...adj, [field]: value };
+      }
+      return adj;
+    });
+    setProfile({ ...profile, defaultAdjustments: newAdjs });
+  };
+
+  const removeAdjustment = (id: string) => {
+    const newAdjs = (profile.defaultAdjustments || []).filter(adj => adj.id !== id);
+    setProfile({ ...profile, defaultAdjustments: newAdjs });
   };
 
   if (loading) return <div className="h-64 flex items-center justify-center text-natural-text/60 font-serif italic tracking-wide">{t('common.loading')}</div>;
@@ -263,6 +288,64 @@ export function Settings({ user }: SettingsProps) {
               rows={4}
               className="w-full px-6 py-5 bg-natural-bg/50 border border-transparent rounded-[24px] focus:bg-white focus:ring-2 focus:ring-natural-sage/20 outline-none transition-all font-sans resize-none leading-relaxed"
             />
+          </div>
+
+          <div className="space-y-4 border-t border-black/5 pt-8">
+            <div className="flex justify-between items-center">
+              <label className="text-[11px] font-bold text-[#99a19b] uppercase tracking-widest ml-1 flex items-center gap-2">
+                <Percent className="w-3.5 h-3.5 opacity-60" />
+                {t('common.defaultAdjustments', 'Default Adjustments')}
+              </label>
+              <button type="button" onClick={addAdjustment} className="text-natural-accent text-sm font-medium flex items-center gap-2 hover:opacity-80 transition-all px-4 py-2 bg-natural-accent/5 rounded-xl">
+                <Plus className="w-4 h-4" />
+                {t('common.addAdjustment', 'Add Adjustment')}
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {(profile.defaultAdjustments || []).map((adj) => (
+                <div key={adj.id} className="flex flex-wrap sm:flex-nowrap items-center gap-4 bg-natural-bg/30 p-4 rounded-[20px] border border-black/5">
+                  <div className="flex-1 min-w-[200px]">
+                    <input
+                      type="text"
+                      placeholder={t('common.adjustmentName', 'e.g. Tax, Discount')}
+                      value={adj.name}
+                      onChange={(e) => updateAdjustment(adj.id, 'name', e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-transparent rounded-xl focus:ring-2 focus:ring-natural-sage/20 outline-none transition-all text-sm font-medium"
+                    />
+                  </div>
+                  <div className="w-32">
+                    <select
+                      value={adj.type}
+                      onChange={(e) => updateAdjustment(adj.id, 'type', e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-transparent rounded-xl focus:ring-2 focus:ring-natural-sage/20 outline-none transition-all text-sm cursor-pointer"
+                    >
+                      <option value="percentage">% Percentage</option>
+                      <option value="fixed">Fixed Amount</option>
+                    </select>
+                  </div>
+                  <div className="w-32">
+                    <input
+                      type="number"
+                      step={adj.type === 'percentage' ? '0.1' : '0.01'}
+                      value={adj.value}
+                      onChange={(e) => updateAdjustment(adj.id, 'value', parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-2.5 bg-white border border-transparent rounded-xl focus:ring-2 focus:ring-natural-sage/20 outline-none transition-all text-sm"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeAdjustment(adj.id)}
+                    className="p-2.5 text-[#99a19b] hover:text-red-500 hover:bg-white rounded-xl transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              {(profile.defaultAdjustments || []).length === 0 && (
+                <p className="text-sm border border-dashed border-black/10 rounded-[20px] p-6 text-center text-natural-text/40">{t('common.noAdjustments', 'No default adjustments added. You can add them here to include them in future invoices automatically.')}</p>
+              )}
+            </div>
           </div>
         </div>
 

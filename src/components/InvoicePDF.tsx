@@ -215,7 +215,6 @@ export function InvoicePDF({ invoice, client, profile }: InvoicePDFProps) {
           <View style={styles.headerRight}>
             {profile.logoUrl && profile.logoPosition === 'top_right' && <Image src={profile.logoUrl} style={styles.logoRight} />}
             <Text style={styles.businessName}>{profile.name || 'Your Business Name'}</Text>
-            {profile.email && <Text style={styles.text}>{profile.email}</Text>}
             {profile.address && <Text style={styles.text}>{profile.address}</Text>}
             {profile.taxId && <Text style={styles.text}>{i18n.t('pdf.taxId')} {profile.taxId}</Text>}
           </View>
@@ -225,7 +224,6 @@ export function InvoicePDF({ invoice, client, profile }: InvoicePDFProps) {
           <View style={styles.billTo}>
             <Text style={styles.sectionTitle}>{i18n.t('pdf.billTo')}</Text>
             <Text style={styles.clientName}>{client.name}</Text>
-            {client.email && <Text style={styles.text}>{client.email}</Text>}
             {client.address && <Text style={styles.text}>{client.address}</Text>}
             {client.taxId && <Text style={styles.text}>{i18n.t('pdf.taxId')} {client.taxId}</Text>}
           </View>
@@ -274,6 +272,17 @@ export function InvoicePDF({ invoice, client, profile }: InvoicePDFProps) {
                 <Text style={styles.totalValue}>{formatCurrency(invoice.taxAmount)}</Text>
               </View>
             )}
+            
+            {(invoice.adjustments || []).map((adj) => {
+              const adjAmount = adj.type === 'percentage' ? (invoice.subtotal || 0) * (adj.value / 100) : adj.value;
+              return (
+                <View key={adj.id} style={styles.totalRow}>
+                  <Text style={styles.totalLabel}>{adj.name} {adj.type === 'percentage' ? `(${adj.value}%)` : ''}</Text>
+                  <Text style={styles.totalValue}>{formatCurrency(adjAmount)}</Text>
+                </View>
+              );
+            })}
+
             <View style={styles.grandTotalRow}>
               <Text style={styles.grandTotalLabel}>{i18n.t('pdf.total')}</Text>
               <Text style={styles.grandTotalValue}>{formatCurrency(invoice.total)}</Text>

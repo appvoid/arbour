@@ -28,6 +28,8 @@ export function Dashboard({ user, onNewInvoice, onEditInvoice, onViewAll }: Dash
     fetchInvoices();
   }, [user.uid]);
 
+  const [marginTimeframe, setMarginTimeframe] = useState<'day' | 'week' | 'month' | 'year'>('month');
+
   const stats = {
     total: invoices.reduce((acc, inv) => acc + inv.total, 0),
     paid: invoices.filter(i => i.status === 'paid').reduce((acc, inv) => acc + inv.total, 0),
@@ -35,7 +37,52 @@ export function Dashboard({ user, onNewInvoice, onEditInvoice, onViewAll }: Dash
     overdue: invoices.filter(i => i.status === 'overdue').reduce((acc, inv) => acc + inv.total, 0),
   };
 
+  const calcMargins = (invs: Invoice[]) => {
+    let revenue = 0;
+    let cost = 0;
+    invs.forEach(inv => {
+      if (inv.status !== 'draft') {
+        inv.items.forEach(item => {
+          revenue += item.amount;
+          cost += (item.costPrice || 0) * item.quantity;
+        });
+      }
+    });
+    if (revenue === 0) return { profit: 0, margin: 0 };
+    const profit = revenue - cost;
+    return { profit, margin: (profit / revenue) * 100 };
+  };
+
+  const timeframeInvoices = invoices.filter(i => {
+    const d = new Date(i.date);
+    const now = new Date();
+    switch (marginTimeframe) {
+      case 'day':
+        return d.toDateString() === now.toDateString();
+      case 'week': {
+        const weekAgo = new Date();
+        weekAgo.setDate(now.getDate() - 7);
+        return d >= weekAgo;
+      }
+      case 'month':
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      case 'year':
+        return d.getFullYear() === now.getFullYear();
+      default:
+        return true;
+    }
+  });
+
+  const margins = calcMargins(timeframeInvoices);
+
   if (loading) return <div className="h-64 flex items-center justify-center text-natural-text/60">{t('common.loading')}</div>;
+
+  const timeframeLabel = {
+    day: t('dashboard.overview.profitDay', 'Profit (Today)'),
+    week: t('dashboard.overview.profitWeek', 'Profit (7d)'),
+    month: t('dashboard.overview.profitMonth', 'Profit (Month)'),
+    year: t('dashboard.overview.profitYear', 'Profit (Year)')
+  }[marginTimeframe];
 
   return (
     <div className="space-y-10">
@@ -54,21 +101,45 @@ export function Dashboard({ user, onNewInvoice, onEditInvoice, onViewAll }: Dash
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: t('dashboard.overview.totalOutstanding'), value: stats.total },
-          { label: t('dashboard.overview.draft'), value: stats.pending },
-          { label: t('dashboard.overview.overdue'), value: stats.overdue },
+          { label: t('dashboard.overview.totalOutstanding', 'Total'), value: stats.total },
+          { label: t('dashboard.overview.draft', 'Draft'), value: stats.pending },
+          { label: t('dashboard.overview.overdue', 'Overdue'), value: stats.overdue },
+          { label: timeframeLabel, value: margins.profit, suffix: margins.margin.toFixed(1) + '%', isMargin: true },
         ].map((stat, i) => (
           <motion.div
-            key={stat.label}
+            key={stat.label + i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="natural-card p-8"
+            className="natural-card p-6 xl:p-8 relative flex flex-col justify-between overflow-hidden"
           >
-            <p className="text-[11px] uppercase tracking-[1px] text-[#7a827c] font-semibold mb-2">{stat.label}</p>
-            <p className="text-3xl font-serif text-natural-text">{formatCurrency(stat.value)}</p>
+            <div className="flex justify-between items-start mb-4 gap-2">
+              <p className="text-[11px] uppercase tracking-[1px] text-[#7a827c] font-semibold line-clamp-2">{stat.label}</p>
+              {stat.isMargin && (
+                <div className="shrink-0 bg-white border border-black/5 rounded-md overflow-hidden dropdown-container shadow-sm">
+                  <select 
+                    value={marginTimeframe}
+                    onChange={(e) => setMarginTimeframe(e.target.value as any)}
+                    className="text-[10px] bg-transparent border-none outline-none font-bold cursor-pointer pl-2 pr-6 py-1 text-[#7a827c] appearance-none hover:bg-gray-50 focus:ring-0 focus:outline-none w-full min-w-[70px]"
+                  >
+                    <option value="day">{t('common.day', 'Today')}</option>
+                    <option value="week">{t('common.week', '7 Days')}</option>
+                    <option value="month">{t('common.month', 'Month')}</option>
+                    <option value="year">{t('common.year', 'Year')}</option>
+                  </select>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col xl:flex-row xl:items-baseline gap-2 mt-auto">
+              <p className="text-3xl font-serif text-natural-text truncate max-w-[100%]">{formatCurrency(stat.value)}</p>
+              {stat.suffix && (
+                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 w-max mb-1 xl:mb-0 ${margins.profit >= 0 ? 'bg-natural-sage/10 text-natural-sage' : 'bg-red-500/10 text-red-600'}`}>
+                   {stat.suffix}
+                 </span>
+              )}
+            </div>
           </motion.div>
         ))}
       </div>

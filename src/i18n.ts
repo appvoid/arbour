@@ -13,7 +13,16 @@ const resources = {
         "search": "Search...",
         "actions": "Actions",
         "status": "Status",
-        "language": "Language"
+        "language": "Language",
+        "adjustments": "Adjustments",
+        "addAdjustment": "Add Adjustment",
+        "defaultAdjustments": "Default Adjustments",
+        "adjustmentName": "e.g. Tax, Discount",
+        "noAdjustments": "No default adjustments added. You can add them here to include them in future invoices automatically.",
+        "day": "Today",
+        "week": "7 Days",
+        "month": "Month",
+        "year": "Year"
       },
       "app": {
         "title": "Arbour Invoicing",
@@ -40,7 +49,11 @@ const resources = {
           "overdue": "Overdue",
           "draft": "Draft",
           "paid": "Paid",
-          "sent": "Sent"
+          "sent": "Sent",
+          "profitDay": "Profit (Today)",
+          "profitWeek": "Profit (7d)",
+          "profitMonth": "Profit (Month)",
+          "profitYear": "Profit (Year)"
         }
       },
       "invoices": {
@@ -93,7 +106,7 @@ const resources = {
         "newTitle": "New Patron Enrollment",
         "name": "Organization / Individual Name *",
         "email": "Primary Contact Email *",
-        "taxId": "Tax Identification / VAT",
+        "taxId": "Tax ID / Company ID",
         "address": "Registered Address",
         "phone": "Contact Number",
         "cancel": "Cancel",
@@ -124,7 +137,7 @@ const resources = {
         "subtitle": "Manage your business identity and billing details",
         "businessName": "Business Name",
         "email": "Official Email",
-        "taxId": "Tax Identification / VAT",
+        "taxId": "Tax ID / Company ID",
         "currency": "Currency Preference",
         "address": "Primary Mailing Address",
         "addressPlaceholder": "Where should arbours be sent?",
@@ -163,7 +176,7 @@ const resources = {
         "tax": "Tax",
         "total": "Total Due",
         "notes": "Notes",
-        "taxId": "Tax ID:"
+        "taxId": "Tax ID / Company ID:"
       }
     }
   },
@@ -178,7 +191,16 @@ const resources = {
         "search": "Buscar...",
         "actions": "Acciones",
         "status": "Estado",
-        "language": "Idioma"
+        "language": "Idioma",
+        "adjustments": "Ajustes",
+        "addAdjustment": "Agregar Ajuste",
+        "defaultAdjustments": "Ajustes Predeterminados",
+        "adjustmentName": "ej. Impuesto, Descuento",
+        "noAdjustments": "No has agregado ajustes. Agrégalos aquí para incluirlos en facturas futuras automáticamente.",
+        "day": "Hoy",
+        "week": "7 Días",
+        "month": "Mes",
+        "year": "Año"
       },
       "app": {
         "title": "Facturación Arbour",
@@ -205,7 +227,11 @@ const resources = {
           "overdue": "Atrasado",
           "draft": "Borrador",
           "paid": "Pagado",
-          "sent": "Enviado"
+          "sent": "Enviado",
+          "profitDay": "Ganancia (Hoy)",
+          "profitWeek": "Ganancia (7d)",
+          "profitMonth": "Ganancia (Mes)",
+          "profitYear": "Ganancia (Año)"
         }
       },
       "invoices": {
@@ -258,7 +284,7 @@ const resources = {
         "newTitle": "Nueva Inscripción de Patrono",
         "name": "Nombre de Organización / Individuo *",
         "email": "Correo de Contacto Principal *",
-        "taxId": "Identificación Fiscal / IVA",
+        "taxId": "RNC / Cédula",
         "address": "Dirección Registrada",
         "phone": "Número de Contacto",
         "cancel": "Cancelar",
@@ -289,7 +315,7 @@ const resources = {
         "subtitle": "Maneja tu identidad comercial y detalles de facturación",
         "businessName": "Nombre Comercial",
         "email": "Correo Oficial",
-        "taxId": "Identificación Fiscal / IVA",
+        "taxId": "RNC / Cédula",
         "currency": "Preferencia de Moneda",
         "address": "Dirección Postal Principal",
         "addressPlaceholder": "¿A dónde deben enviarse los arbours?",
@@ -328,7 +354,7 @@ const resources = {
         "tax": "Impuesto",
         "total": "Total a Pagar",
         "notes": "Notas",
-        "taxId": "ID Fiscal:"
+        "taxId": "RNC / Cédula:"
       }
     }
   }
@@ -338,8 +364,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: "en", // default language
-    fallbackLng: "en",
+    lng: "es", // default language
+    fallbackLng: "es",
     interpolation: {
       escapeValue: false
     }
