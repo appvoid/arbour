@@ -1,12 +1,8 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+![demo](https://github.com/appvoid/arbour/blob/main/demo.png?raw=true)
 
-# Run and deploy your AI Studio app
+# arbour
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/bd75dd6f-0d68-410a-9e6e-82fbfdfb3856
+This contains everything you need to run your invoicing system locally.
 
 ## Run Locally
 
